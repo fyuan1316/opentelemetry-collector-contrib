@@ -66,6 +66,12 @@ exporters:
         - backend-2:4317
         - backend-3:4317
         - backend-4:4317
+      ## use k8s service resolver, if collector runs in kubernetes environment
+      #k8s:
+      #  service: lb-svc.kube-public
+      #  ports:
+      #    - 15317
+      #    - 16317
 
 service:
   pipelines:

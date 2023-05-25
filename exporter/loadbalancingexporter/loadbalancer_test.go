@@ -63,6 +63,55 @@ func TestNewLoadBalancerInvalidDNSResolver(t *testing.T) {
 	require.Equal(t, errNoHostname, err)
 }
 
+func TestNewLoadBalancerInvalidK8sResolver(t *testing.T) {
+
+	var tests = []struct {
+		name string
+		cfg  *Config
+		want *loadBalancerImp
+		//exported bool
+		wantErr error
+	}{
+		{
+			name: "invalid name of k8s service",
+			cfg: &Config{
+				Resolver: ResolverSettings{
+					K8sSvc: &K8sSvcResolver{
+						Service: "",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: errNoSvc,
+		},
+		{
+			name: "invalid ports of k8s service",
+			cfg: &Config{
+				Resolver: ResolverSettings{
+					K8sSvc: &K8sSvcResolver{
+						Service: "example.kube-public",
+					},
+				},
+			},
+			want:    nil,
+			wantErr: errNoSvcPorts,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p, err := newLoadBalancer(exportertest.NewNopCreateSettings(), tt.cfg, nil)
+
+			if tt.wantErr != nil {
+				require.Error(t, err, tt.wantErr)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.want, p)
+			}
+		})
+	}
+}
+
 func TestLoadBalancerStart(t *testing.T) {
 	// prepare
 	cfg := simpleConfig()
