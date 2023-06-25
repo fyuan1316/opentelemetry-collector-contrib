@@ -160,8 +160,8 @@ func Test_newK8sResolver(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, tt.wantNil, got == nil)
 				if !tt.wantNil {
-					require.Equal(t, tt.wantService, got.service)
-					require.Equal(t, tt.wantNamespace, got.namespace)
+					require.Equal(t, tt.wantService, got.svcName)
+					require.Equal(t, tt.wantNamespace, got.svcNs)
 				}
 			}
 		})

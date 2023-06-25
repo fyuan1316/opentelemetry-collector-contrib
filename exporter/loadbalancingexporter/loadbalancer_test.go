@@ -66,10 +66,8 @@ func TestNewLoadBalancerInvalidDNSResolver(t *testing.T) {
 func TestNewLoadBalancerInvalidK8sResolver(t *testing.T) {
 
 	var tests = []struct {
-		name string
-		cfg  *Config
-		want *loadBalancerImp
-		//exported bool
+		name    string
+		cfg     *Config
 		wantErr error
 	}{
 		{
@@ -81,7 +79,6 @@ func TestNewLoadBalancerInvalidK8sResolver(t *testing.T) {
 					},
 				},
 			},
-			want:    nil,
 			wantErr: errNoSvc,
 		},
 		{
@@ -93,21 +90,14 @@ func TestNewLoadBalancerInvalidK8sResolver(t *testing.T) {
 					},
 				},
 			},
-			want:    nil,
 			wantErr: errNoSvcPorts,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p, err := newLoadBalancer(exportertest.NewNopCreateSettings(), tt.cfg, nil)
-
-			if tt.wantErr != nil {
-				require.Error(t, err, tt.wantErr)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, tt.want, p)
-			}
+			_, err := newLoadBalancer(exportertest.NewNopCreateSettings(), tt.cfg, nil)
+			assert.Equal(t, tt.wantErr, err)
 		})
 	}
 }
